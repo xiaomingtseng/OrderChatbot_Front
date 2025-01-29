@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import { postData } from '../api/apiService';
 
 function AddStore() {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add logic to save the store details
-    console.log('Store added:', { name, address });
-    navigate('/store-list');
+    try {
+        const storeDetails = { name, address };
+        const response = await postData('/stores', storeDetails);
+        console.log('Store added:', response);
+        navigate('/store-list');
+    } catch (error) {
+        console.error('Error adding store:', error);
+    }
   };
 
   return (

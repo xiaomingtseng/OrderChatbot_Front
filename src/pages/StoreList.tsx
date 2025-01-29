@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-const stores = [
-  { id: 1, name: 'Store A', address: '123 Main St' },
-  { id: 2, name: 'Store B', address: '456 Elm St' },
-  { id: 3, name: 'Store C', address: '789 Oak St' },
-];
+import { fetchData } from '../api/apiService';
 
 function StoreList() {
+  const [stores, setStores] = useState([]);
+
+  useEffect(() => {
+    const getStores = async () => {
+      try {
+        const result = await fetchData('/stores');
+        setStores(result);
+      } catch (error) {
+        console.error('Error fetching stores:', error);
+      }
+    };
+
+    getStores();
+  }, []);
+
   return (
     <div className="p-4">
       <header className="flex justify-between items-center px-4 py-2 bg-white shadow">
@@ -19,6 +30,7 @@ function StoreList() {
           <li key={store.id} className="bg-white p-4 rounded shadow">
             <h2 className="text-lg font-semibold">{store.name}</h2>
             <p className="text-sm text-gray-500">{store.address}</p>
+            <p className="text-sm text-gray-500">{store.id}</p>
           </li>
         ))}
       </ul>

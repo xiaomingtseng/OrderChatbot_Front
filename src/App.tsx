@@ -20,7 +20,7 @@ function App() {
         <Route path="/store-add" element={<AddStore />} />
         <Route path="/store-edit" element={<EditStore />} />
         <Route path='/store-select' element={<SelectStore />} />
-        <Route path="/edit-store/:id" element={<EditStoreDetails />} />
+        <Route path="/edit-store/:_id" element={<EditStoreDetails />} />
       </Routes>
     </Router>
   )
