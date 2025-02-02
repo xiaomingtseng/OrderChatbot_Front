@@ -5,13 +5,14 @@ import { postData } from '../api/apiService';
 
 function AddStore() {
   const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setlocation] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-        const storeDetails = { name, address };
+        const storeDetails = { name, description, location };
         const response = await postData('/stores', storeDetails);
         console.log('Store added:', response);
         navigate('/store-list');
@@ -37,11 +38,20 @@ function AddStore() {
           />
         </div>
         <div>
+          <label className="block text-sm font-medium text-gray-700">店家介紹(optional)</label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-gray-700">地址</label>
           <input
             type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={location}
+            onChange={(e) => setlocation(e.target.value)}
             className="mt-1 block w-full p-2 border border-gray-300 rounded"
             required
           />

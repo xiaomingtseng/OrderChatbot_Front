@@ -47,6 +47,8 @@ export const postData = async (endpoint, data) => {
 
 export const updateStore = async (storeId, data) => {
     try {
+        //不能把原本的DATA直接傳進去，因為會回傳404
+        //不能傳入_id，因為會回傳500
         const response = await apiClient.put(`/stores/${storeId}`, data);
         return response.data;
     } catch (error) {
