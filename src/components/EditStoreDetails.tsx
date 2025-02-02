@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchData, uploadImage, updateStore } from '../api/apiService';
+import { fetchData, updateStore } from '../api/apiService';
 import NavBar from '../components/NavBar';
 
 interface Store {
@@ -16,14 +16,12 @@ function EditStoreDetails() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    //console.log('useParams _id:', _id); // Log the _id to ensure it's being retrieved correctly
-
     const fetchStore = async () => {
       if (_id) {
-        //console.log('Fetching store details:', _id);
+        console.log('Fetching store details:', _id);
         try {
           const fetchedStore = await fetchData(`/stores/${_id}`);
-          //console.log('Fetched store details:', fetchedStore); // Log the fetched store details
+          console.log('Fetched store details:', fetchedStore);
           setStore(fetchedStore);
         } catch (error) {
           console.error('Error fetching store details:', error);
@@ -42,16 +40,19 @@ function EditStoreDetails() {
     }
   };
 
-  const handleUpload = async () => {
-    if (selectedFile && _id) {
-      try {
-        await uploadImage(_id, selectedFile);
-        console.log('Image uploaded successfully');
-      } catch (error) {
-        console.error('Error uploading image:', error);
-      }
-    }
-  };
+  // const handleUpload = async () => {
+  //   if (selectedFile && _id) {
+  //     try {
+  //       const imageResponse = await uploadImage(_id, selectedFile);
+  //       console.log('Image uploaded successfully', imageResponse);
+  //       // Assuming imageResponse contains the image _id
+  //       setStore({ ...store, menu_id: imageResponse._id });
+  //       console.log('Store updated with image _id');
+  //     } catch (error) {
+  //       console.error('Error uploading image:', error);
+  //     }
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +65,11 @@ function EditStoreDetails() {
         console.error('Error updating store:', error);
       }
     }
+  };
+
+  const handleUpdateMenuItem = () => {
+    // Logic for updating the menu item
+    console.log('Update menu item button clicked');
   };
 
   return (
@@ -92,19 +98,16 @@ function EditStoreDetails() {
             required
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">上傳菜單圖片</label>
-          <input type="file" onChange={handleFileChange} className="mt-1 block w-full p-2 border border-gray-300 rounded" />
-          <button
-            type="button"
-            onClick={handleUpload}
-            className="w-full py-2 px-4 bg-yellow-500 text-white font-semibold rounded mt-2"
-          >
-            上傳圖片
-          </button>
-        </div>
+        
         <button type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded mt-2">
           更新店家
+        </button>
+        <button
+          type="button"
+          onClick={handleUpdateMenuItem}
+          className="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded mt-2"
+        >
+          更新菜單項目
         </button>
       </form>
       <NavBar />
