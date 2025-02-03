@@ -1,23 +1,51 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-import { postData } from '../api/apiService';
+import { postData, updateMenu } from '../api/apiService';
+import { parseStoreString } from '../utils/parseStoreString';
 
 function AddStore() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setlocation] = useState('');
+  const [location, setLocation] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-        const storeDetails = { name, description, location };
-        const response = await postData('/stores', storeDetails);
-        console.log('Store added:', response);
-        navigate('/store-list');
+      // Create a menu first
+      const menuResponse = await postData('/menus', {
+        store_id: "",
+        image_id: "",
+        menu_item_ids: [],
+      });
+      console.log('Menu added:', menuResponse._id);
+      const menuId = menuResponse._id;
+  
+      // Create the store with the new menu ID
+      const storeDetails = {
+        name : name,
+        description : description,
+        location : location,
+        menu_id : menuId,
+      };
+      console.log('Adding store:', storeDetails);
+      const storeResponse = parseStoreString(await postData('/stores', storeDetails));
+      console.log('Store added:', storeResponse);
+      
+      // Update the menu with the new store ID
+      const newMenu = await updateMenu(menuResponse._id, {
+        store_id: storeResponse?._id,
+        image_id: "",
+        menu_item_ids: [],
+      });
+      console.log('Menu updated successfully');
+      console.log(newMenu)
+      
+      // Navigate to store list
+      navigate('/store-list');
     } catch (error) {
-        console.error('Error adding store:', error);
+      console.error('Error:', error);
     }
   };
 
@@ -38,7 +66,7 @@ function AddStore() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">店家介紹(optional)</label>
+          <label className="block text-sm font-medium text-gray-700">店家介紹 (可選)</label>
           <input
             type="text"
             value={description}
@@ -51,7 +79,7 @@ function AddStore() {
           <input
             type="text"
             value={location}
-            onChange={(e) => setlocation(e.target.value)}
+            onChange={(e) => setLocation(e.target.value)}
             className="mt-1 block w-full p-2 border border-gray-300 rounded"
             required
           />

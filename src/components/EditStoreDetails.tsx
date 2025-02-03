@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchData, updateStore } from '../api/apiService';
 import NavBar from '../components/NavBar';
 import { Store } from '../types/store'; // Ensure you have a proper Store type
-import { parseStoreString } from '../utils/parseStoreString';
 
 const EditStoreDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // ✅ Extract store ID from URL
@@ -48,6 +47,8 @@ const EditStoreDetails: React.FC = () => {
 
   const handleUpdateMenuItem = () => {
     console.log('Update menu item button clicked');
+    
+
   };
 
   return (
