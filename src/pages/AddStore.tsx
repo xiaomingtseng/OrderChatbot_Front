@@ -1,17 +1,52 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import { postData, updateMenu } from '../api/apiService';
+import { parseStoreString } from '../utils/parseStoreString';
 
 function AddStore() {
   const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add logic to save the store details
-    console.log('Store added:', { name, address });
-    navigate('/store-list');
+    try {
+      // Create a menu first
+      const menuResponse = await postData('/menus', {
+        store_id: "",
+        image_id: "",
+        menu_item_ids: [],
+      });
+      console.log('Menu added:', menuResponse._id);
+      const menuId = menuResponse._id;
+  
+      // Create the store with the new menu ID
+      const storeDetails = {
+        name : name,
+        description : description,
+        location : location,
+        menu_id : menuId,
+      };
+      console.log('Adding store:', storeDetails);
+      const storeResponse = parseStoreString(await postData('/stores', storeDetails));
+      console.log('Store added:', storeResponse);
+      
+      // Update the menu with the new store ID
+      const newMenu = await updateMenu(menuResponse._id, {
+        store_id: storeResponse?._id,
+        image_id: "",
+        menu_item_ids: [],
+      });
+      console.log('Menu updated successfully');
+      console.log(newMenu)
+      
+      // Navigate to store list
+      navigate('/store-list');
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -31,11 +66,20 @@ function AddStore() {
           />
         </div>
         <div>
+          <label className="block text-sm font-medium text-gray-700">店家介紹 (可選)</label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-gray-700">地址</label>
           <input
             type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
             className="mt-1 block w-full p-2 border border-gray-300 rounded"
             required
           />
